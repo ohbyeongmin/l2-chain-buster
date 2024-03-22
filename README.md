@@ -1,3 +1,3 @@
-# Chain Buster
+# L2 Chain Buster
 
-Blockchain node performance test tool based on Optimism
+L2chain(based on Optimism) node performance test tool based on k6
