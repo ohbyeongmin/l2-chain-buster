@@ -7,10 +7,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const envPrefix = "L2_CHAIN_BUSTER"
+const EnvPrefix = "L2_CHAIN_BUSTER"
 
 func prefixEnvVars(name string) []string {
-	return opservice.PrefixEnvVar(envPrefix, name)
+	return opservice.PrefixEnvVar(EnvPrefix, name)
 }
 
 var (
@@ -35,8 +35,8 @@ var requiredFlags = []cli.Flag{
 var externalFlags []cli.Flag
 
 func init() {
-	externalFlags = append(externalFlags, txmgr.CLIFlags(envPrefix)...)
-	externalFlags = append(externalFlags, opmetrics.CLIFlags(envPrefix)...)
+	externalFlags = append(externalFlags, txmgr.CLIFlags(EnvPrefix)...)
+	externalFlags = append(externalFlags, opmetrics.CLIFlags(EnvPrefix)...)
 
 	Flags = append(requiredFlags, externalFlags...)
 }
