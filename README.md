@@ -1,3 +1,3 @@
 # L2 Chain Buster
 
-L2chain(Optimism) node performance test tool based on k6
+L2chain(Optimism) node performance test tool
