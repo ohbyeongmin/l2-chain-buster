@@ -15,6 +15,7 @@ type ChainBusterService struct {
 	Log     log.Logger
 	Metrics metrics.Metrics
 	Root    *txmgr.TxManager
+	Wallets *Wallets
 
 	ChainBuster
 
@@ -26,16 +27,24 @@ func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, log lo
 	if err := cbs.initFromCLIConfig(ctx, cfg, log); err != nil {
 		return nil, errors.Join(err, cbs.Stop(ctx))
 	}
+	fmt.Printf("%+v\n", cbs.Scenarios)
+	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.W))
+
 	return &cbs, nil
 }
 
 func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLIConfig, log log.Logger) error {
-	// init chainBuster
 	if err := cbs.initScenario(cfg); err != nil {
 		return fmt.Errorf("failed to init scenario: %w", err)
 	}
 
-	fmt.Printf("%+v\n", cbs.Scenarios)
+	if err := cbs.initWallets(cfg); err != nil {
+		return fmt.Errorf("failed to init wallets: %w", err)
+	}
+
+	if err := cbs.initUsers(cfg); err != nil {
+		return fmt.Errorf("failed to init users: %w", err)
+	}
 
 	return nil
 }
@@ -43,9 +52,22 @@ func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLICo
 func (cbs *ChainBusterService) initScenario(cfg *CLIConfig) error {
 	new, err := NewScenarios(cfg.Scenario)
 	if err != nil {
-		return fmt.Errorf("failed to create new scenario: %w", err)
+		return fmt.Errorf("failed to create scenarios: %w", err)
 	}
 	cbs.Scenarios = new
+	return nil
+}
+
+func (cbs *ChainBusterService) initWallets(cfg *CLIConfig) error {
+	new, err := NewWallets(cfg.Scenario, cbs.Scenarios)
+	if err != nil {
+		return fmt.Errorf("faild to create wallets: %w", err)
+	}
+	cbs.Wallets = new
+	return nil
+}
+
+func (cbs *ChainBusterService) initUsers(cfg *CLIConfig) error {
 	return nil
 }
 

@@ -1,9 +1,7 @@
 package chainbuster
 
 import (
-	"os"
-
-	"gopkg.in/yaml.v3"
+	"github.com/ohbyeongmin/l2-chain-buster/utils"
 )
 
 type Scenario struct {
@@ -27,14 +25,19 @@ type Scenarios struct {
 
 func NewScenarios(filename string) (*Scenarios, error) {
 	var scens Scenarios
-	yamlFile, err := os.ReadFile(filename)
-	if err != nil {
+	if err := utils.ConvertYAMLtoStruct(filename, &scens); err != nil {
 		return nil, err
 	}
-
-	if err := yaml.Unmarshal(yamlFile, &scens); err != nil {
-		return nil, err
-	}
-
 	return &scens, nil
+}
+
+func (ss *Scenarios) maxUsers() int {
+	max := 0
+	for _, s := range ss.Scenarios {
+		total := s.Users + s.Bridge.Users
+		if max < total {
+			max = total
+		}
+	}
+	return max
 }

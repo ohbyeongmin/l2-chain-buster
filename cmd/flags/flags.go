@@ -30,11 +30,6 @@ var (
 		Usage:   "Scenario file file",
 		EnvVars: prefixEnvVars("SCENARIO_PATH"),
 	}
-	WalletsFlag = &cli.StringFlag{
-		Name:    "wallets-file",
-		Usage:   "wallets file file",
-		EnvVars: prefixEnvVars("WALLETS_PATH"),
-	}
 )
 
 var requiredFlags = []cli.Flag{
@@ -43,9 +38,7 @@ var requiredFlags = []cli.Flag{
 	ScenarioFlag,
 }
 
-var optionalFlags = []cli.Flag{
-	WalletsFlag,
-}
+var optionalFlags []cli.Flag
 
 func init() {
 	optionalFlags = append(optionalFlags, txmgr.CLIFlags(EnvPrefix)...)

@@ -9,5 +9,5 @@ type User struct {
 
 type ChainBuster struct {
 	Scenarios *Scenarios
-	Users     *Wallets
+	Users     []User
 }
