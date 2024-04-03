@@ -5,8 +5,15 @@ import (
 	opmetrics "github.com/ethereum-optimism/optimism/op-service/metrics"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr"
 	"github.com/ohbyeongmin/l2-chain-buster/cmd/flags"
+	"github.com/ohbyeongmin/l2-chain-buster/utils"
 	"github.com/urfave/cli/v2"
 )
+
+type YAMLConfig struct {
+	Root      string     `yaml:"root"`
+	Scenarios *Scenarios `yaml:"jobs"`
+	Wallets   *Wallets   `yaml:"actors"`
+}
 
 type CLIConfig struct {
 	L1EthRpc string
@@ -18,7 +25,7 @@ type CLIConfig struct {
 	MetricsConfig opmetrics.CLIConfig
 }
 
-func NewConfig(ctx *cli.Context) *CLIConfig {
+func NewCLIConfig(ctx *cli.Context) *CLIConfig {
 	return &CLIConfig{
 		L1EthRpc: ctx.String(flags.L1EthRpcFlag.Name),
 		L2EthRpc: ctx.String(flags.L2EthRpcFlag.Name),
@@ -28,4 +35,10 @@ func NewConfig(ctx *cli.Context) *CLIConfig {
 		LogConfig:     oplog.ReadCLIConfig(ctx),
 		MetricsConfig: opmetrics.ReadCLIConfig(ctx),
 	}
+}
+
+func NewYAMLConfig(cfg *CLIConfig) *YAMLConfig {
+	var yConfig YAMLConfig
+	utils.ConvertYAMLtoStruct(cfg.Scenario, &yConfig)
+	return &yConfig
 }

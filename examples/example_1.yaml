@@ -1,18 +1,25 @@
-scenarios:
-    - users: 3
-      duration: 30
-      rps: 100
-      bridge:
-        users: 10
-        interval: 5
-        counts: 3
-        withraw_proved_time: 3600
-        withraw_finalized_time: 86400
-    - users: 10
-      duration: 30
-reuse_wallets: true
-wallets:
-    - address: 0x1e578D986D1A831315C9D518f49aE6C09360bfAd
-      private_key: 0x84efabf8ad5067cd1f20837d1da9a535ee384f4d0b64b6a42f40251a6297265b
-    - address: 0x2b79ce3fcbf994F1dD5bDB3EdA97829c857f787F
-      private_key: 0x023b7ddb0de171af27a8a528a507e3407563a329264fb3e7710d18777eff5b25
+root: 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
+jobs:
+    scenarios:
+        - users: 3
+          duration: 30
+          rps: 100
+          bridge:
+            users: 10
+            interval: 5
+            counts: 3
+            withraw_proved_time: 3600
+            withraw_finalized_time: 86400
+        - users: 10
+          duration: 30
+actors:
+    reuse_wallets: true
+    wallets:
+        - address: 0x1e578D986D1A831315C9D518f49aE6C09360bfAd
+          private_key: 0x84efabf8ad5067cd1f20837d1da9a535ee384f4d0b64b6a42f40251a6297265b
+        - address: 0x2b79ce3fcbf994F1dD5bDB3EdA97829c857f787F
+          private_key: 0x023b7ddb0de171af27a8a528a507e3407563a329264fb3e7710d18777eff5b25
+        - address: 0x88e151cB1eC91248457fd8B711C2bb710a269757
+          private_key: 0x7a334de14576a48520e84405199f2093105e3a4df229c927a658d8c2b7ed
+        - address: 0x62461Bd5C0Ba962Db9d031698BE03FB2427B7d97
+          private_key: 0xdf246247c5748fb927126ce96b9e6787d86ffd48cf5a42c5826773d97379

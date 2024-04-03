@@ -22,23 +22,24 @@ type ChainBusterService struct {
 	stopped atomic.Bool
 }
 
-func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, log log.Logger) (*ChainBusterService, error) {
+func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) (*ChainBusterService, error) {
 	var cbs ChainBusterService
-	if err := cbs.initFromCLIConfig(ctx, cfg, log); err != nil {
+	if err := cbs.initFromCLIConfig(ctx, cfg, ycfg, log); err != nil {
 		return nil, errors.Join(err, cbs.Stop(ctx))
 	}
 	fmt.Printf("%+v\n", cbs.Scenarios)
 	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.List))
+	fmt.Printf("%+v\n", ycfg.Root)
 
 	return &cbs, nil
 }
 
-func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLIConfig, log log.Logger) error {
-	if err := cbs.initScenario(cfg); err != nil {
+func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) error {
+	if err := cbs.initScenario(ycfg); err != nil {
 		return fmt.Errorf("failed to init scenario: %w", err)
 	}
 
-	if err := cbs.initWallets(cfg); err != nil {
+	if err := cbs.initWallets(cfg, ycfg); err != nil {
 		return fmt.Errorf("failed to init wallets: %w", err)
 	}
 
@@ -49,21 +50,21 @@ func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLICo
 	return nil
 }
 
-func (cbs *ChainBusterService) initScenario(cfg *CLIConfig) error {
-	new, err := NewScenarios(cfg.Scenario)
-	if err != nil {
-		return fmt.Errorf("failed to create scenarios: %w", err)
+func (cbs *ChainBusterService) initScenario(ycfg *YAMLConfig) error {
+	if err := CheckScenarios(ycfg.Scenarios); err != nil {
+		return fmt.Errorf("faild to init scenario: %w", err)
 	}
-	cbs.Scenarios = new
+	cbs.Scenarios = ycfg.Scenarios
 	return nil
 }
 
-func (cbs *ChainBusterService) initWallets(cfg *CLIConfig) error {
-	new, err := NewWallets(cfg.Scenario, cbs.Scenarios)
-	if err != nil {
-		return fmt.Errorf("faild to create wallets: %w", err)
+func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
+	if !CheckWallets(ycfg) {
+		if err := NewWallets(cfg, ycfg); err != nil {
+			return fmt.Errorf("faild to init wallets: %w", err)
+		}
 	}
-	cbs.Wallets = new
+	cbs.Wallets = ycfg.Wallets
 	return nil
 }
 

@@ -9,11 +9,6 @@ import (
 	"github.com/ohbyeongmin/l2-chain-buster/utils"
 )
 
-/*
-key: address
-value: private key
-*/
-
 type Wallets struct {
 	Reuse bool     `yaml:"reuse_wallets"`
 	List  []Wallet `yaml:"wallets"`
@@ -24,26 +19,29 @@ type Wallet struct {
 	PrivateKey string `yaml:"private_key"`
 }
 
-func NewWallets(filename string, scenarios *Scenarios) (*Wallets, error) {
-	var wallets Wallets
-	if err := utils.ConvertYAMLtoStruct(filename, &wallets); err != nil {
-		return nil, err
+// if true enough wallets
+func CheckWallets(ycfg *YAMLConfig) bool {
+	if max := ycfg.Scenarios.maxUsers(); len(ycfg.Wallets.List) < max {
+		return false
 	}
-	if max := scenarios.maxUsers(); len(wallets.List) < max {
-		need := max - len(wallets.List)
-		for need > 0 {
-			w, err := newWallet()
-			if err != nil {
-				return nil, err
-			}
-			wallets.List = append(wallets.List, *w)
-			need -= 1
+	return true
+}
+
+func NewWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
+	wallets := ycfg.Wallets
+	need := ycfg.Scenarios.maxUsers() - len(wallets.List)
+	for need > 0 {
+		w, err := newWallet()
+		if err != nil {
+			return err
 		}
-		if wallets.Reuse {
-			utils.ConvertStructsToYAML(filename, scenarios, &wallets)
-		}
+		wallets.List = append(wallets.List, *w)
+		need -= 1
 	}
-	return &wallets, nil
+	if wallets.Reuse {
+		utils.ConvertStructsToYAML(cfg.Scenario, ycfg)
+	}
+	return nil
 }
 
 func newWallet() (*Wallet, error) {

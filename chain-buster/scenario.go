@@ -1,9 +1,5 @@
 package chainbuster
 
-import (
-	"github.com/ohbyeongmin/l2-chain-buster/utils"
-)
-
 type Scenario struct {
 	Users    int    `yaml:"users"`
 	Duration int    `yaml:"duration"`
@@ -23,12 +19,8 @@ type Scenarios struct {
 	List []Scenario `yaml:"scenarios"`
 }
 
-func NewScenarios(filename string) (*Scenarios, error) {
-	var scens Scenarios
-	if err := utils.ConvertYAMLtoStruct(filename, &scens); err != nil {
-		return nil, err
-	}
-	return &scens, nil
+func CheckScenarios(scenarios *Scenarios) error {
+	return nil
 }
 
 func (ss *Scenarios) maxUsers() int {
