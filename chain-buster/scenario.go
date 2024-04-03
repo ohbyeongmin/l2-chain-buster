@@ -7,8 +7,8 @@ import (
 type Scenario struct {
 	Users    int    `yaml:"users"`
 	Duration int    `yaml:"duration"`
-	RPS      int    `yaml:"rps"`
-	Bridge   Bridge `yaml:"bridge"`
+	RPS      int    `yaml:"rps,omitempty"`
+	Bridge   Bridge `yaml:"bridge,omitempty"`
 }
 
 type Bridge struct {
@@ -20,7 +20,7 @@ type Bridge struct {
 }
 
 type Scenarios struct {
-	Scenarios []Scenario `yaml:"scenarios"`
+	List []Scenario `yaml:"scenarios"`
 }
 
 func NewScenarios(filename string) (*Scenarios, error) {
@@ -33,7 +33,7 @@ func NewScenarios(filename string) (*Scenarios, error) {
 
 func (ss *Scenarios) maxUsers() int {
 	max := 0
-	for _, s := range ss.Scenarios {
+	for _, s := range ss.List {
 		total := s.Users + s.Bridge.Users
 		if max < total {
 			max = total

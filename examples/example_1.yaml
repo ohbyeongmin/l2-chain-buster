@@ -1,19 +1,18 @@
 scenarios:
-  - users: 3
-    duration: 30
-    rps: 100 # rps를 입력하지 않으면 한계치까지 올림
-    bridge: # users 몇명이서 동시에 몇초간격으로 몇번 입/출금을 할 것인가
-      users: 10
-      interval: 5
-      counts: 3
-      withraw_proved_time: 3600
-      withraw_finalized_time: 86400
-  - users: 10
-    duration: 30
-
-reuse: true
+    - users: 3
+      duration: 30
+      rps: 100
+      bridge:
+        users: 10
+        interval: 5
+        counts: 3
+        withraw_proved_time: 3600
+        withraw_finalized_time: 86400
+    - users: 10
+      duration: 30
+reuse_wallets: true
 wallets:
-  - address: 0x1e578D986D1A831315C9D518f49aE6C09360bfAd
-    private_key: 0x84efabf8ad5067cd1f20837d1da9a535ee384f4d0b64b6a42f40251a6297265b
-  - address: 0x2b79ce3fcbf994F1dD5bDB3EdA97829c857f787F
-    private_key: 0x023b7ddb0de171af27a8a528a507e3407563a329264fb3e7710d18777eff5b25
+    - address: 0x1e578D986D1A831315C9D518f49aE6C09360bfAd
+      private_key: 0x84efabf8ad5067cd1f20837d1da9a535ee384f4d0b64b6a42f40251a6297265b
+    - address: 0x2b79ce3fcbf994F1dD5bDB3EdA97829c857f787F
+      private_key: 0x023b7ddb0de171af27a8a528a507e3407563a329264fb3e7710d18777eff5b25

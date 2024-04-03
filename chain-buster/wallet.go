@@ -3,12 +3,10 @@ package chainbuster
 import (
 	"crypto/ecdsa"
 	"fmt"
-	"os"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ohbyeongmin/l2-chain-buster/utils"
-	"gopkg.in/yaml.v3"
 )
 
 /*
@@ -17,8 +15,8 @@ value: private key
 */
 
 type Wallets struct {
-	reuse bool     `yaml:"reuse"`
-	W     []Wallet `yaml:"wallets"`
+	Reuse bool     `yaml:"reuse_wallets"`
+	List  []Wallet `yaml:"wallets"`
 }
 
 type Wallet struct {
@@ -31,20 +29,18 @@ func NewWallets(filename string, scenarios *Scenarios) (*Wallets, error) {
 	if err := utils.ConvertYAMLtoStruct(filename, &wallets); err != nil {
 		return nil, err
 	}
-	fmt.Println("asdasd", wallets.reuse)
-	if max := scenarios.maxUsers(); len(wallets.W) < max {
-		need := max - len(wallets.W)
+	if max := scenarios.maxUsers(); len(wallets.List) < max {
+		need := max - len(wallets.List)
 		for need > 0 {
 			w, err := newWallet()
 			if err != nil {
 				return nil, err
 			}
-			wallets.W = append(wallets.W, *w)
+			wallets.List = append(wallets.List, *w)
 			need -= 1
 		}
-		if wallets.reuse {
-			yamlData, _ := yaml.Marshal(wallets)
-			os.WriteFile(filename, yamlData, 0644)
+		if wallets.Reuse {
+			utils.ConvertStructsToYAML(filename, scenarios, &wallets)
 		}
 	}
 	return &wallets, nil

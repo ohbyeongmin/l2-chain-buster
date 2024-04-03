@@ -28,7 +28,7 @@ func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, log lo
 		return nil, errors.Join(err, cbs.Stop(ctx))
 	}
 	fmt.Printf("%+v\n", cbs.Scenarios)
-	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.W))
+	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.List))
 
 	return &cbs, nil
 }
