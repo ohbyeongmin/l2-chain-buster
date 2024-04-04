@@ -8,6 +8,8 @@ import (
 	txmetrics "github.com/ethereum-optimism/optimism/op-service/txmgr/metrics"
 )
 
+const Namespace = "l2_chain_buster"
+
 type Metricer interface {
 	opmetrics.RPCMetricer
 	txmetrics.TxMetricer
@@ -26,10 +28,10 @@ type Metrics struct {
 	opmetrics.RPCMetrics
 }
 
-func NewMetrics() *Metrics {
+func NewMetrics(procName string) *Metrics {
 	registry := opmetrics.NewRegistry()
 	factory := opmetrics.With(registry)
-	ns := "l2_chain_buster"
+	ns := Namespace + "_" + procName
 
 	return &Metrics{
 		ns:         ns,

@@ -3,12 +3,13 @@ package chainbuster
 import (
 	"context"
 
-	opservice "github.com/ethereum-optimism/optimism/op-service"
-	oplog "github.com/ethereum-optimism/optimism/op-service/log"
+	"github.com/urfave/cli/v2"
+
 	"github.com/ohbyeongmin/l2-chain-buster/cmd/flags"
 
+	opservice "github.com/ethereum-optimism/optimism/op-service"
 	"github.com/ethereum-optimism/optimism/op-service/cliapp"
-	"github.com/urfave/cli/v2"
+	oplog "github.com/ethereum-optimism/optimism/op-service/log"
 )
 
 func Main() cliapp.LifecycleAction {

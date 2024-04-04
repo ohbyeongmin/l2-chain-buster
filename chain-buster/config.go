@@ -1,16 +1,17 @@
 package chainbuster
 
 import (
+	"github.com/urfave/cli/v2"
+
+	"github.com/ohbyeongmin/l2-chain-buster/cmd/flags"
+	"github.com/ohbyeongmin/l2-chain-buster/utils"
+
 	oplog "github.com/ethereum-optimism/optimism/op-service/log"
 	opmetrics "github.com/ethereum-optimism/optimism/op-service/metrics"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr"
-	"github.com/ohbyeongmin/l2-chain-buster/cmd/flags"
-	"github.com/ohbyeongmin/l2-chain-buster/utils"
-	"github.com/urfave/cli/v2"
 )
 
 type YAMLConfig struct {
-	Root      string     `yaml:"root"`
 	Scenarios *Scenarios `yaml:"jobs"`
 	Wallets   *Wallets   `yaml:"actors"`
 }

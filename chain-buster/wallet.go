@@ -4,9 +4,10 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 
+	"github.com/ohbyeongmin/l2-chain-buster/utils"
+
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ohbyeongmin/l2-chain-buster/utils"
 )
 
 type Wallets struct {
