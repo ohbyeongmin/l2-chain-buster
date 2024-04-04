@@ -23,3 +23,21 @@ actors:
           private_key: 0x7a334de14576a48520e84405199f2093105e3a4df229c927a658d8c2b7ed
         - address: 0x62461Bd5C0Ba962Db9d031698BE03FB2427B7d97
           private_key: 0xdf246247c5748fb927126ce96b9e6787d86ffd48cf5a42c5826773d97379
+        - address: 0xa0549ed2bc63F39293ab2b00a401d9dD7dF6d121
+          private_key: 0xbd0c4167083ec9a2ed7a34c39d9cc4fc835b2bf1c26938d277e7d7ae0084
+        - address: 0x98c15D028Aa1E214E73A09b6Da1084695994817b
+          private_key: 0x04a7f9c66b7d54b1a97a554a725cbcc7504abf3e2ee0f0003f9d3338c318
+        - address: 0x42F9E6f04079D36e684087381a8815CBdAbFC4eF
+          private_key: 0xfc64039e7ca14048e9f8561aef892167e6e6cadb8b3251c23ab8d0c6590c
+        - address: 0x70919bc3F96aCA1c6f5DAdD7489b22F5614242C8
+          private_key: 0x2a70d86ddd6fade30cbaf5a8db57ff6c310ce8a13b51a298bd4f12b1f9be
+        - address: 0x0Caa198A1Fb07213C76f3763a6a8115Ba92b6B11
+          private_key: 0x1a6c5a43134b69c5dff50bf22c877ba464ee81b8a4fe17418093eb336f9d
+        - address: 0xf260C35A8E6D602cD4c7595d18B2fF2F9552B74d
+          private_key: 0xef088410142669846d521968d9419c42568e9e394f53e192ba5c1c295fdf
+        - address: 0x4089F046F573893Ea965336E90e0E6B6b4A4AC0D
+          private_key: 0xaf786d43f7573ab17bfbc3eae951bc8e27d17f55d26f5255127206458197
+        - address: 0x5f10f271BFf1904EE1F444406E5C3Cbfdda18542
+          private_key: 0x6b2b546f954bb036f02428e1c5f600d03b3a860a54f0356d9bc1c546a117
+        - address: 0xc88B6F1347145e79703B000D5d40e10a1664d4ec
+          private_key: 0xa1f805599441e220219195241e3a0eb7fd597b9e383f2048e1f96b0462f0

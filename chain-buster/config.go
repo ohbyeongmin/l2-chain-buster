@@ -16,9 +16,9 @@ type YAMLConfig struct {
 }
 
 type CLIConfig struct {
-	L1EthRpc string
-	L2EthRpc string
-	Scenario string
+	L1EthRpc     string
+	L2EthRpc     string
+	ScenarioPath string
 
 	TxMgrConfig   txmgr.CLIConfig
 	LogConfig     oplog.CLIConfig
@@ -27,9 +27,9 @@ type CLIConfig struct {
 
 func NewCLIConfig(ctx *cli.Context) *CLIConfig {
 	return &CLIConfig{
-		L1EthRpc: ctx.String(flags.L1EthRpcFlag.Name),
-		L2EthRpc: ctx.String(flags.L2EthRpcFlag.Name),
-		Scenario: ctx.String(flags.ScenarioFlag.Name),
+		L1EthRpc:     ctx.String(flags.L1EthRpcFlag.Name),
+		L2EthRpc:     ctx.String(flags.L2EthRpcFlag.Name),
+		ScenarioPath: ctx.String(flags.ScenarioFlag.Name),
 
 		TxMgrConfig:   txmgr.ReadCLIConfig(ctx),
 		LogConfig:     oplog.ReadCLIConfig(ctx),
@@ -39,6 +39,6 @@ func NewCLIConfig(ctx *cli.Context) *CLIConfig {
 
 func NewYAMLConfig(cfg *CLIConfig) *YAMLConfig {
 	var yConfig YAMLConfig
-	utils.ConvertYAMLtoStruct(cfg.Scenario, &yConfig)
+	utils.ConvertYAMLtoStruct(cfg.ScenarioPath, &yConfig)
 	return &yConfig
 }

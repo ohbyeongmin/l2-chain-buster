@@ -39,7 +39,7 @@ func NewWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
 		need -= 1
 	}
 	if wallets.Reuse {
-		utils.ConvertStructsToYAML(cfg.Scenario, ycfg)
+		utils.ConvertStructsToYAML(cfg.ScenarioPath, ycfg)
 	}
 	return nil
 }

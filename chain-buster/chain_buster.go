@@ -20,6 +20,6 @@ func Main() cliapp.LifecycleAction {
 		opservice.ValidateEnvVars(flags.EnvPrefix, flags.Flags, l)
 
 		l.Info("Initializing Chain Buster")
-		return ChainBusterServiceFromCLIConfig(cliCtx.Context, cfg, ycfg, l)
+		return ChainBusterServiceFromConfigs(cliCtx.Context, cfg, ycfg, l)
 	}
 }

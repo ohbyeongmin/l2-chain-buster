@@ -22,9 +22,9 @@ type ChainBusterService struct {
 	stopped atomic.Bool
 }
 
-func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) (*ChainBusterService, error) {
+func ChainBusterServiceFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) (*ChainBusterService, error) {
 	var cbs ChainBusterService
-	if err := cbs.initFromCLIConfig(ctx, cfg, ycfg, log); err != nil {
+	if err := cbs.initFromConfigs(ctx, cfg, ycfg, log); err != nil {
 		return nil, errors.Join(err, cbs.Stop(ctx))
 	}
 	fmt.Printf("%+v\n", cbs.Scenarios)
@@ -34,7 +34,7 @@ func ChainBusterServiceFromCLIConfig(ctx context.Context, cfg *CLIConfig, ycfg *
 	return &cbs, nil
 }
 
-func (cbs *ChainBusterService) initFromCLIConfig(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) error {
+func (cbs *ChainBusterService) initFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) error {
 	if err := cbs.initScenario(ycfg); err != nil {
 		return fmt.Errorf("failed to init scenario: %w", err)
 	}
@@ -65,6 +65,10 @@ func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) err
 		}
 	}
 	cbs.Wallets = ycfg.Wallets
+	return nil
+}
+
+func (cbs *ChainBusterService) initRoot(ycfg *YAMLConfig) error {
 	return nil
 }
 
