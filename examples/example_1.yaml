@@ -2,7 +2,7 @@ jobs:
     scenarios:
         - users: 3
           duration: 30
-          rps: 100
+          rps: true
           bridge:
             users: 10
             interval: 5
@@ -14,29 +14,29 @@ jobs:
 actors:
     reuse_wallets: true
     wallets:
-        - address: 0x1e578D986D1A831315C9D518f49aE6C09360bfAd
-          private_key: 0x84efabf8ad5067cd1f20837d1da9a535ee384f4d0b64b6a42f40251a6297265b
-        - address: 0x2b79ce3fcbf994F1dD5bDB3EdA97829c857f787F
-          private_key: 0x023b7ddb0de171af27a8a528a507e3407563a329264fb3e7710d18777eff5b25
-        - address: 0x88e151cB1eC91248457fd8B711C2bb710a269757
-          private_key: 0x7a334de14576a48520e84405199f2093105e3a4df229c927a658d8c2b7ed
-        - address: 0x62461Bd5C0Ba962Db9d031698BE03FB2427B7d97
-          private_key: 0xdf246247c5748fb927126ce96b9e6787d86ffd48cf5a42c5826773d97379
-        - address: 0xa0549ed2bc63F39293ab2b00a401d9dD7dF6d121
-          private_key: 0xbd0c4167083ec9a2ed7a34c39d9cc4fc835b2bf1c26938d277e7d7ae0084
-        - address: 0x98c15D028Aa1E214E73A09b6Da1084695994817b
-          private_key: 0x04a7f9c66b7d54b1a97a554a725cbcc7504abf3e2ee0f0003f9d3338c318
-        - address: 0x1BCaa6a9943631c6D52eB6252bF06Fa90134c51b
-          private_key: 0x26b1b1587b611828aa8c2080da5a10e575d47aa1e657920b4f6e65bb04ae
-        - address: 0x09ef7FF19c62CDF471b1dD2A87F0cF26B727eCE3
-          private_key: 0x64b774c6af07a2a07a6fe2d114bce99e05988ea46077a7e7ca5c62ffe885
-        - address: 0x6F0A663dC84f9030DE237bAF97EC0EFc9f7B5ffa
-          private_key: 0xa340d175428466e404e4acd9c4ae3da85b42c218b7ff38f7f8dca975ae59
-        - address: 0x9cb727D56c2C8a2692Ca48E1513D7B46AA6496c7
-          private_key: 0x946c5e44353875ab633d8e832404c1256ec0cba8c33fd313476c9994df23
-        - address: 0xDBFF1E27911332404b065595D386cD06f5715181
-          private_key: 0xac447030ce5acf8002999a4c5a0f9a4a7336ef549b4bcf1b2b3795d3ca2d
-        - address: 0xEA03Cf7443611E224097D3aa0676A32E32f5414E
-          private_key: 0x3b0c0222520b100fac49cd9b4d9b38738fe90d4054cf70302521a240a82b
-        - address: 0xa5eb8A2a5bA066F595B379cD8646f726FC686E46
-          private_key: 0x7aa30cea01af147b576da054ea5500e6b8ef895f768dc165c419576d47f0
+        - address: 0xEF08c395A0eD9776A75b50dA5FC50a3e640e0055
+          private_key: 0x2582a46073dba66789f1b2593e9512b39f3f113dd2294c421a5d33577e0f
+        - address: 0xF1c1fF64c7690c8c4382099Bc62b6Eca4641A960
+          private_key: 0xd46ef343bad29aaba5b1345ea6531e88d9e9c2de596ccfe119a06d1b3482
+        - address: 0x58D30db22EA67f0B546ecf8A67755DE4188bC43D
+          private_key: 0x66bbbb2ef91e1c53f5df5bd8aba8a23cc795e6cedb70d8902b3e77f1e66f
+        - address: 0x0f97CA8e5E7d190979733084841A926B6386dB90
+          private_key: 0x89bc7868d22bb84e9d97080a56e230c17c7307ae9de7247446125def5fe3
+        - address: 0xb05a7E2Db7E5d99598660AE595D6493D47f57b76
+          private_key: 0xb548935f65a9084510aee4ed7b02fe386ec21267370dc596538bb139fe44
+        - address: 0x3917FcB3984383B706a620b3FCB5832E809b09cB
+          private_key: 0x6d83552590cd0882f3ed722e94ea45167396bd132f2d74d64c9d0b994ad2
+        - address: 0x77868d327983b166C9F8A2EF62DD72a1223F7c31
+          private_key: 0xfb28e637f258720b5c95c2cba6a09bd244376f29d4664ed76a6f2c959d72
+        - address: 0xbb08b51F2B462E4e54ffD319faDE55071e1f1DeB
+          private_key: 0x544427d52f4d9911a0c25ea047bb2a9c647dddf128d14a22f3404ad3f61c
+        - address: 0x98D6547b38f336343896137FdD651ccde60b6dB5
+          private_key: 0x14692ffa4001c705228873e0febe444f5bbaeeb4f46fdc492a9deafb8391
+        - address: 0x8dBA496C3494cc88Cb7Ca45A65C4B13B42BcC851
+          private_key: 0xdb71ecc9baf963239bed93fdb9a410698266fa8b9541e7ac3e7deeebf6c2
+        - address: 0xc6575D6Fa5C21A30F175867764B001f8A72E3dDf
+          private_key: 0x2c52a3e0ce2976d94531171f3522a3036b920a5c0c7c60d6447aef231639
+        - address: 0xce95A050196D9E61bB323b042ee6f66e4c5Db5e8
+          private_key: 0x6afb4e7e0ec383527a76d8c2430987a4317a9d4f77e8a4231711a91324ae
+        - address: 0x6EfbF94C919393c0Bda49ac93f4f5D9ceD2c3559
+          private_key: 0xe01b77a429e123f93fecde55a07868399c2fc21c2960368fabb7786dcbc1

@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 
 	"github.com/ohbyeongmin/l2-chain-buster/metrics"
+	"github.com/ohbyeongmin/l2-chain-buster/utils"
 
 	"github.com/ethereum-optimism/optimism/op-service/dial"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr"
@@ -26,13 +27,14 @@ type Client struct {
 }
 
 type ChainBusterService struct {
-	Log     log.Logger
-	Metrics metrics.Metricer
-	Root    *Root
-	Wallets *Wallets
-	Client  *Client
+	Log       log.Logger
+	Metrics   metrics.Metricer
+	Root      *Root
+	Wallets   *Wallets
+	Scenarios *Scenarios
+	Client    *Client
 
-	*ChainBuster
+	driver *ChainBuster
 
 	stopped atomic.Bool
 }
@@ -44,12 +46,12 @@ func ChainBusterServiceFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YA
 	}
 	fmt.Printf("%+v\n", cbs.Scenarios)
 	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.List))
-	l1Addr := cbs.Root.L1TxManager.From()
-	l2Addr := cbs.Root.L2TxManager.From()
-	l1bal, _ := cbs.Client.L1.BalanceAt(ctx, l1Addr, nil)
-	l2bal, _ := cbs.Client.L2.BalanceAt(ctx, l2Addr, nil)
-	fmt.Printf("addr: %v, balance: %d\n", l1Addr, l1bal)
-	fmt.Printf("addr: %v, balance: %d\n", l2Addr, l2bal)
+	// l1Addr := cbs.Root.L1TxManager.From()
+	// l2Addr := cbs.Root.L2TxManager.From()
+	// l1bal, _ := cbs.Client.L1.BalanceAt(ctx, l1Addr, nil)
+	// l2bal, _ := cbs.Client.L2.BalanceAt(ctx, l2Addr, nil)
+	// fmt.Printf("addr: %v, balance: %d\n", l1Addr, l1bal)
+	// fmt.Printf("addr: %v, balance: %d\n", l2Addr, l2bal)
 
 	return &cbs, nil
 }
@@ -57,6 +59,10 @@ func ChainBusterServiceFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YA
 func (cbs *ChainBusterService) initFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YAMLConfig, log log.Logger) error {
 	cbs.Log = log
 	cbs.initMetrics(cfg)
+
+	if err := cbs.initScenarios(ycfg); err != nil {
+		return fmt.Errorf("failed to init scenarios: %w", err)
+	}
 
 	if err := cbs.initWallets(cfg, ycfg); err != nil {
 		return fmt.Errorf("failed to init wallets: %w", err)
@@ -70,13 +76,7 @@ func (cbs *ChainBusterService) initFromConfigs(ctx context.Context, cfg *CLIConf
 		return fmt.Errorf("failed to init client: %w", err)
 	}
 
-	if err := cbs.initChainBuster(ycfg); err != nil {
-		return fmt.Errorf("failed to init chain buster: %w", err)
-	}
-
-	if err := cbs.initUsers(cfg); err != nil {
-		return fmt.Errorf("failed to init users: %w", err)
-	}
+	cbs.initDriver()
 
 	return nil
 }
@@ -88,13 +88,29 @@ func (bs *ChainBusterService) initMetrics(cfg *CLIConfig) {
 	}
 }
 
-func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
-	if !CheckWallets(ycfg) {
-		if err := NewWallets(cfg, ycfg); err != nil {
-			return fmt.Errorf("faild to init wallets: %w", err)
-		}
+func (cbs *ChainBusterService) initScenarios(ycfg *YAMLConfig) error {
+	if err := CheckScenarios(ycfg.Scenarios); err != nil {
+		return fmt.Errorf("faild to check scenarios: %w", err)
 	}
-	cbs.Wallets = ycfg.Wallets
+	cbs.Scenarios = ycfg.Scenarios
+	return nil
+}
+
+func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
+	requiredWallets := cbs.Scenarios.maxUsers() - len(ycfg.Wallets.List)
+	wallets := ycfg.Wallets
+	for requiredWallets > 0 {
+		w, err := NewWallet()
+		if err != nil {
+			return err
+		}
+		wallets.List = append(wallets.List, *w)
+		requiredWallets -= 1
+	}
+	if wallets.Reuse {
+		utils.ConvertStructsToYAML(cfg.ScenarioPath, ycfg)
+	}
+	cbs.Wallets = wallets
 	return nil
 }
 
@@ -137,15 +153,35 @@ func (cbs *ChainBusterService) initClient(ctx context.Context, cfg *CLIConfig) e
 	return nil
 }
 
-func (cbs *ChainBusterService) initChainBuster(ycfg *YAMLConfig) error {
-	cbs.ChainBuster = &ChainBuster{
-		Scenarios: ycfg.Scenarios,
-		Users:     []User{},
+func (cbs *ChainBusterService) initDriver() {
+	cbs.driver = NewChainBuster(DriverSetup{
+		Scenarios: cbs.Scenarios,
+		Wallets:   cbs.Wallets,
 		L1Client:  cbs.Client.L1,
 		L2Client:  cbs.Client.L2,
-	}
-	return nil
+	})
 }
+
+// func checkWalletsCountOnScenarios(ycfg *YAMLConfig) int {
+// 	return ycfg.Scenarios.maxUsers() - len(ycfg.Wallets.List)
+// }
+
+// func addWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
+// 	wallets := ycfg.Wallets
+// 	need := ycfg.Scenarios.maxUsers() - len(wallets.List)
+// 	for need > 0 {
+// 		w, err := NewWallet()
+// 		if err != nil {
+// 			return err
+// 		}
+// 		wallets.List = append(wallets.List, *w)
+// 		need -= 1
+// 	}
+// 	if wallets.Reuse {
+// 		utils.ConvertStructsToYAML(cfg.ScenarioPath, ycfg)
+// 	}
+// 	return nil
+// }
 
 func (cbs *ChainBusterService) initUsers(cfg *CLIConfig) error {
 	return nil

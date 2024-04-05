@@ -3,7 +3,7 @@ package chainbuster
 type Scenario struct {
 	Users    int    `yaml:"users"`
 	Duration int    `yaml:"duration"`
-	RPS      int    `yaml:"rps,omitempty"`
+	RPS      bool   `yaml:"rps,omitempty"`
 	Bridge   Bridge `yaml:"bridge,omitempty"`
 }
 

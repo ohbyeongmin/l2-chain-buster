@@ -4,8 +4,6 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 
-	"github.com/ohbyeongmin/l2-chain-buster/utils"
-
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -20,32 +18,7 @@ type Wallet struct {
 	PrivateKey string `yaml:"private_key"`
 }
 
-// if true enough wallets
-func CheckWallets(ycfg *YAMLConfig) bool {
-	if max := ycfg.Scenarios.maxUsers(); len(ycfg.Wallets.List) < max {
-		return false
-	}
-	return true
-}
-
-func NewWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
-	wallets := ycfg.Wallets
-	need := ycfg.Scenarios.maxUsers() - len(wallets.List)
-	for need > 0 {
-		w, err := newWallet()
-		if err != nil {
-			return err
-		}
-		wallets.List = append(wallets.List, *w)
-		need -= 1
-	}
-	if wallets.Reuse {
-		utils.ConvertStructsToYAML(cfg.ScenarioPath, ycfg)
-	}
-	return nil
-}
-
-func newWallet() (*Wallet, error) {
+func NewWallet() (*Wallet, error) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
 		return nil, err
