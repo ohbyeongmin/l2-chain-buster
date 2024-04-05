@@ -5,23 +5,34 @@ import (
 	"errors"
 	"fmt"
 	"sync/atomic"
-	"time"
 
 	"github.com/ohbyeongmin/l2-chain-buster/metrics"
 
+	"github.com/ethereum-optimism/optimism/op-service/dial"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
 )
 
+type Root struct {
+	L1TxManager txmgr.TxManager
+	L2TxManager txmgr.TxManager
+}
+
+type Client struct {
+	L1 *ethclient.Client
+	L2 *ethclient.Client
+}
+
 type ChainBusterService struct {
 	Log     log.Logger
 	Metrics metrics.Metricer
-	Root    txmgr.TxManager
+	Root    *Root
 	Wallets *Wallets
+	Client  *Client
 
-	ChainBuster
+	*ChainBuster
 
 	stopped atomic.Bool
 }
@@ -33,6 +44,12 @@ func ChainBusterServiceFromConfigs(ctx context.Context, cfg *CLIConfig, ycfg *YA
 	}
 	fmt.Printf("%+v\n", cbs.Scenarios)
 	fmt.Printf("%+v, %d\n", cbs.Wallets, len(cbs.Wallets.List))
+	l1Addr := cbs.Root.L1TxManager.From()
+	l2Addr := cbs.Root.L2TxManager.From()
+	l1bal, _ := cbs.Client.L1.BalanceAt(ctx, l1Addr, nil)
+	l2bal, _ := cbs.Client.L2.BalanceAt(ctx, l2Addr, nil)
+	fmt.Printf("addr: %v, balance: %d\n", l1Addr, l1bal)
+	fmt.Printf("addr: %v, balance: %d\n", l2Addr, l2bal)
 
 	return &cbs, nil
 }
@@ -41,25 +58,25 @@ func (cbs *ChainBusterService) initFromConfigs(ctx context.Context, cfg *CLIConf
 	cbs.Log = log
 	cbs.initMetrics(cfg)
 
-	if err := cbs.initScenario(ycfg); err != nil {
-		return fmt.Errorf("failed to init scenario: %w", err)
-	}
-
 	if err := cbs.initWallets(cfg, ycfg); err != nil {
 		return fmt.Errorf("failed to init wallets: %w", err)
-	}
-
-	if err := cbs.initUsers(cfg); err != nil {
-		return fmt.Errorf("failed to init users: %w", err)
 	}
 
 	if err := cbs.initRoot(cfg); err != nil {
 		return fmt.Errorf("failed to init root: %w", err)
 	}
 
-	addr := cbs.Root.From()
-	bal, nil := cbs.Client.BalanceAt(ctx, addr, nil)
-	fmt.Printf("addr: %v, balance: %d\n", addr, bal)
+	if err := cbs.initClient(ctx, cfg); err != nil {
+		return fmt.Errorf("failed to init client: %w", err)
+	}
+
+	if err := cbs.initChainBuster(ycfg); err != nil {
+		return fmt.Errorf("failed to init chain buster: %w", err)
+	}
+
+	if err := cbs.initUsers(cfg); err != nil {
+		return fmt.Errorf("failed to init users: %w", err)
+	}
 
 	return nil
 }
@@ -69,14 +86,6 @@ func (bs *ChainBusterService) initMetrics(cfg *CLIConfig) {
 		procName := "default"
 		bs.Metrics = metrics.NewMetrics(procName)
 	}
-}
-
-func (cbs *ChainBusterService) initScenario(ycfg *YAMLConfig) error {
-	if err := CheckScenarios(ycfg.Scenarios); err != nil {
-		return fmt.Errorf("faild to init scenario: %w", err)
-	}
-	cbs.Scenarios = ycfg.Scenarios
-	return nil
 }
 
 func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
@@ -90,20 +99,51 @@ func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) err
 }
 
 func (cbs *ChainBusterService) initRoot(cfg *CLIConfig) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	client, err := ethclient.DialContext(ctx, cfg.L1EthRpc)
+	l1TxMgr, err := txmgr.NewSimpleTxManager("l1-root", cbs.Log, cbs.Metrics, cfg.TxMgrConfig)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to init l1TxMgr: %w", err)
 	}
-	cbs.Client = client
 
-	root, err := txmgr.NewSimpleTxManager("root", cbs.Log, cbs.Metrics, cfg.TxMgrConfig)
+	l2TxMgrConfig := cfg.TxMgrConfig
+	l2TxMgrConfig.L1RPCURL = cfg.L2EthRpc
+	l2TxMgr, err := txmgr.NewSimpleTxManager("l2-root", cbs.Log, cbs.Metrics, l2TxMgrConfig)
 	if err != nil {
-		return nil
+		return fmt.Errorf("failed to init l2TxMgr: %w", err)
 	}
-	cbs.Root = root
 
+	cbs.Root = &Root{
+		L1TxManager: l1TxMgr,
+		L2TxManager: l2TxMgr,
+	}
+
+	return nil
+}
+
+func (cbs *ChainBusterService) initClient(ctx context.Context, cfg *CLIConfig) error {
+	l1Client, err := dial.DialEthClientWithTimeout(ctx, dial.DefaultDialTimeout, cbs.Log, cfg.L1EthRpc)
+	if err != nil {
+		return fmt.Errorf("failed to dial L1 RPC: %w", err)
+	}
+	l2Client, err := dial.DialEthClientWithTimeout(ctx, dial.DefaultDialTimeout, cbs.Log, cfg.L2EthRpc)
+	if err != nil {
+		return fmt.Errorf("failed to dial L2 RPC %w", err)
+	}
+
+	cbs.Client = &Client{
+		L1: l1Client,
+		L2: l2Client,
+	}
+
+	return nil
+}
+
+func (cbs *ChainBusterService) initChainBuster(ycfg *YAMLConfig) error {
+	cbs.ChainBuster = &ChainBuster{
+		Scenarios: ycfg.Scenarios,
+		Users:     []User{},
+		L1Client:  cbs.Client.L1,
+		L2Client:  cbs.Client.L2,
+	}
 	return nil
 }
 

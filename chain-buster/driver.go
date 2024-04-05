@@ -13,5 +13,6 @@ type User struct {
 type ChainBuster struct {
 	Scenarios *Scenarios
 	Users     []User
-	Client    *ethclient.Client
+	L1Client  *ethclient.Client
+	L2Client  *ethclient.Client
 }
