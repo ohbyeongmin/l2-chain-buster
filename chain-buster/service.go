@@ -102,7 +102,7 @@ func (cbs *ChainBusterService) initWallets(cfg *CLIConfig, ycfg *YAMLConfig) err
 	for requiredWallets > 0 {
 		w, err := NewWallet()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to init wallets: %w", err)
 		}
 		wallets.List = append(wallets.List, *w)
 		requiredWallets -= 1
