@@ -162,31 +162,6 @@ func (cbs *ChainBusterService) initDriver() {
 	})
 }
 
-// func checkWalletsCountOnScenarios(ycfg *YAMLConfig) int {
-// 	return ycfg.Scenarios.maxUsers() - len(ycfg.Wallets.List)
-// }
-
-// func addWallets(cfg *CLIConfig, ycfg *YAMLConfig) error {
-// 	wallets := ycfg.Wallets
-// 	need := ycfg.Scenarios.maxUsers() - len(wallets.List)
-// 	for need > 0 {
-// 		w, err := NewWallet()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		wallets.List = append(wallets.List, *w)
-// 		need -= 1
-// 	}
-// 	if wallets.Reuse {
-// 		utils.ConvertStructsToYAML(cfg.ScenarioPath, ycfg)
-// 	}
-// 	return nil
-// }
-
-func (cbs *ChainBusterService) initUsers(cfg *CLIConfig) error {
-	return nil
-}
-
 func (cbs *ChainBusterService) Start(_ context.Context) error {
 	return nil
 }
